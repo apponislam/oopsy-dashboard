@@ -17,6 +17,9 @@ export const metadata: Metadata = {
         template: "%s | Oopsy Admin Console",
     },
     description: "Comfort & Convenience, Anywhere. Find clean restrooms, showers, and luggage storage near you — instantly.",
+    icons: {
+        icon: "/icon.svg",
+    },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

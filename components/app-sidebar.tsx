@@ -1,173 +1,100 @@
 "use client";
 
 import * as React from "react";
-import {
-    LayoutDashboard,
-    AlertTriangle,
-    BarChart3,
-    Settings,
-    Users,
-    Bell,
-    ChevronDown,
-    LogOut,
-    HelpCircle,
-    UserCheck
-} from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { navigationGroups } from "@/lib/menu";
 
-import {
-    Sidebar,
-    SidebarContent,
-    SidebarFooter,
-    SidebarGroup,
-    SidebarGroupContent,
-    SidebarGroupLabel,
-    SidebarHeader,
-    SidebarMenu,
-    SidebarMenuButton,
-    SidebarMenuItem,
-    SidebarRail,
-} from "@/components/ui/sidebar";
+import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuBadge, SidebarMenuButton, SidebarMenuItem, SidebarRail } from "@/components/ui/sidebar";
 
-const navItems = [
-    {
-        title: "Overview",
-        url: "/",
-        icon: LayoutDashboard,
-    },
-    {
-        title: "Incidents & Oopsies",
-        url: "/incidents",
-        icon: AlertTriangle,
-    },
-    {
-        title: "Analytics",
-        url: "/analytics",
-        icon: BarChart3,
-    },
-    {
-        title: "Team Members",
-        url: "/team",
-        icon: Users,
-    },
-];
-
-const secondaryItems = [
-    {
-        title: "Notifications",
-        url: "/notifications",
-        icon: Bell,
-    },
-    {
-        title: "Settings",
-        url: "/settings",
-        icon: Settings,
-    },
-    {
-        title: "Help & Support",
-        url: "/support",
-        icon: HelpCircle,
-    },
-];
+import { LogOut } from "lucide-react";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const pathname = usePathname();
 
     return (
         <Sidebar collapsible="offcanvas" className="border-r border-border/40" {...props}>
-            <SidebarHeader className="h-14 border-b border-border/40 px-4 justify-center">
+            {/* Header */}
+            <SidebarHeader className="h-16 border-b border-border/40 px-4 justify-center">
                 <Link href="/" className="flex items-center gap-3 font-semibold group-data-[collapsible=icon]:justify-center">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-500/10 text-red-500 ring-1 ring-red-500/20">
-                        <AlertTriangle className="h-5 w-5" />
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#005461] text-white shadow-sm shrink-0">
+                        <Image src="/auth/icon1.svg" alt="Oopsy Logo" width={22} height={10} className="invert brightness-0 text-white" />
                     </div>
                     <div className="flex flex-col group-data-[collapsible=icon]:hidden">
-                        <span className="text-sm font-bold tracking-tight text-foreground">Oopsy</span>
-                        <span className="text-[10px] font-medium text-muted-foreground">Incident Tracker</span>
+                        <span className="text-base font-bold tracking-tight text-[#005461]">OOPSY</span>
+                        <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Admin Console</span>
                     </div>
                 </Link>
             </SidebarHeader>
 
-            <SidebarContent className="px-2 py-2">
-                <SidebarGroup>
-                    <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
-                        Dashboard
-                    </SidebarGroupLabel>
-                    <SidebarGroupContent>
-                        <SidebarMenu>
-                            {navItems.map((item) => {
-                                const isActive = pathname === item.url;
-                                return (
-                                    <SidebarMenuItem key={item.title}>
-                                        <SidebarMenuButton
-                                            isActive={isActive}
-                                            tooltip={item.title}
-                                            className={isActive ? "bg-accent text-accent-foreground font-medium" : "text-muted-foreground hover:text-foreground"}
-                                            render={
-                                                <Link href={item.url}>
-                                                    <item.icon className="h-4 w-4" />
-                                                    <span>{item.title}</span>
-                                                </Link>
-                                            }
-                                        />
-                                    </SidebarMenuItem>
-                                );
-                            })}
-                        </SidebarMenu>
-                    </SidebarGroupContent>
-                </SidebarGroup>
-
-                <SidebarGroup>
-                    <SidebarGroupLabel className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
-                        System
-                    </SidebarGroupLabel>
-                    <SidebarGroupContent>
-                        <SidebarMenu>
-                            {secondaryItems.map((item) => {
-                                const isActive = pathname === item.url;
-                                return (
-                                    <SidebarMenuItem key={item.title}>
-                                        <SidebarMenuButton
-                                            isActive={isActive}
-                                            tooltip={item.title}
-                                            className={isActive ? "bg-accent text-accent-foreground font-medium" : "text-muted-foreground hover:text-foreground"}
-                                            render={
-                                                <Link href={item.url}>
-                                                    <item.icon className="h-4 w-4" />
-                                                    <span>{item.title}</span>
-                                                </Link>
-                                            }
-                                        />
-                                    </SidebarMenuItem>
-                                );
-                            })}
-                        </SidebarMenu>
-                    </SidebarGroupContent>
-                </SidebarGroup>
+            {/* Content Groups from lib/menu.ts */}
+            <SidebarContent className="px-3 py-2 space-y-4">
+                {navigationGroups.map((group) => (
+                    <SidebarGroup key={group.groupLabel} className="p-0">
+                        <SidebarGroupLabel className="text-[11px] font-bold uppercase tracking-wider text-[#005461]/60 px-2 py-1">{group.groupLabel}</SidebarGroupLabel>
+                        <SidebarGroupContent>
+                            <SidebarMenu>
+                                {group.items.map((item) => {
+                                    const isActive = pathname === item.url;
+                                    return (
+                                        <SidebarMenuItem key={item.title}>
+                                            <SidebarMenuButton
+                                                isActive={isActive}
+                                                data-active={isActive}
+                                                tooltip={item.title}
+                                                className={
+                                                    isActive
+                                                        ? "bg-[#005461]! text-white! font-semibold hover:bg-[#005461]! hover:text-white! data-[active=true]:bg-[#005461]! data-[active=true]:text-white! rounded-lg"
+                                                        : "text-[#005461]/80 hover:bg-[#E2EFF1] hover:text-[#005461] rounded-lg transition-colors"
+                                                }
+                                                render={
+                                                    <Link href={item.url} className="flex items-center gap-3 w-full">
+                                                        <item.icon className="h-4 w-4 shrink-0" />
+                                                        <span className="flex-1 truncate">{item.title}</span>
+                                                        {item.badge !== undefined && (
+                                                            <SidebarMenuBadge
+                                                                className={isActive ? "bg-white/20 text-white font-semibold text-[11px] px-2 py-0.5 rounded-full border border-white/30" : "bg-[#005461]/10 text-[#005461] font-semibold text-[11px] px-2 py-0.5 rounded-full border border-[#005461]/20"}
+                                                            >
+                                                                {item.badge}
+                                                            </SidebarMenuBadge>
+                                                        )}
+                                                    </Link>
+                                                }
+                                            />
+                                        </SidebarMenuItem>
+                                    );
+                                })}
+                            </SidebarMenu>
+                        </SidebarGroupContent>
+                    </SidebarGroup>
+                ))}
             </SidebarContent>
 
-            <SidebarFooter className="border-t border-border/40 p-2">
+            {/* Footer Profile Card with Integrated Bottom Logout Button */}
+            <SidebarFooter className="border-t border-border/40 p-3">
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton
-                            size="lg"
-                            tooltip="User Profile"
-                            className="w-full justify-start gap-3 hover:bg-accent group-data-[collapsible=icon]:p-0 group-data-[collapsible=icon]:justify-center"
-                            render={
-                                <div className="flex items-center gap-3 w-full">
-                                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-semibold shrink-0">
-                                        JD
-                                    </div>
-                                    <div className="flex flex-col text-left group-data-[collapsible=icon]:hidden overflow-hidden">
-                                        <span className="text-xs font-medium truncate text-foreground">John Doe</span>
-                                        <span className="text-[10px] text-muted-foreground truncate">john@oopsy.dev</span>
-                                    </div>
+                        <div className="flex flex-col gap-3 w-full p-3 bg-[#005461] text-white rounded-xl shadow-sm">
+                            {/* Top: User Avatar & Info */}
+                            <div className="flex items-center gap-3 overflow-hidden">
+                                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-white text-xs font-bold shrink-0">AD</div>
+                                <div className="flex flex-col text-left group-data-[collapsible=icon]:hidden overflow-hidden">
+                                    <span className="text-xs font-bold truncate">Admin Console</span>
+                                    <span className="text-[11px] text-white/80 truncate">admin@elivapp.com</span>
                                 </div>
-                            }
-                        />
+                            </div>
+
+                            {/* Bottom: Icon + Log Out Button */}
+                            <Link href="/auth/login" className="flex items-center justify-center gap-2 w-full py-1.5 px-3 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition-colors group-data-[collapsible=icon]:hidden">
+                                <LogOut className="h-3.5 w-3.5" />
+                                <span>Log Out</span>
+                            </Link>
+                        </div>
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarFooter>
+
             <SidebarRail />
         </Sidebar>
     );
