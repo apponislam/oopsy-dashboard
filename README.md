@@ -1,10 +1,6 @@
 # Oopsy Dashboard — Platform Administration Console
 
 <p align="center">
-  <img src="public/oopsy-bg.png" alt="Oopsy Dashboard Banner" width="100%" style="border-radius: 16px;" />
-</p>
-
-<p align="center">
   <strong>Comfort & Convenience, Anywhere.</strong><br />
   A modern, high-performance Next.js 16 administration platform for managing clean restrooms, showers, lockers, spa facilities, bookings, payouts, safety incidents, content moderation, and platform settings.
 </p>
@@ -30,75 +26,92 @@
 ## 🌟 Comprehensive System Architecture & Modules
 
 ### 🔐 1. Authentication & Security Suite (`/auth`)
+
 - **Login Console** (`/auth/login`): Split-screen desktop & mobile stack with custom checkboxes, brand styling (`#005461`, `#088395`), and password visibility toggles.
 - **Forgot Password** (`/auth/forgot-password`): Email verification entry powered by React Hook Form & Zod with direct navigation to Sign in.
 - **Verify OTP** (`/auth/verify-otp`): 6-digit pin code entry with auto-focusing inputs, clipboard paste support, and interactive resend timers.
 - **Reset Password** (`/auth/reset-password`): Secure password update screen with matching confirmation validation.
 
 ### 📊 2. Platform Overview & Metrics (`/`)
+
 - Live KPIs: Total Bookings, Active Providers, Facility Inventory, and Total Revenue.
 - Visual charts, booking activity trends, facility type breakdown, and rapid management shortcuts.
 
 ### 👥 3. User Management (`/users`)
+
 - Complete account logs for registered clients.
 - Status filters (Active, Pending, Suspended), role controls, and detailed slide-over profile drawer.
 
 ### 🏢 4. Facility Providers (`/providers`)
+
 - Directory of partner facility owners and corporate hosts.
 - Verification badges, total listings metric, contact actions, and provider details drawer.
 
 ### 🏷️ 5. Facility Listings Inventory (`/listings`)
+
 - Complete inventory of platform facility spots (Restrooms, Showers, Lockers, Spa, Jacuzzi, etc.).
 - Approval moderation (`Approved`, `Pending`, `Rejected`), pricing details, and listing drawer preview.
 
 ### 📅 6. Bookings & Reservations (`/bookings`)
+
 - Real-time booking transaction logs.
 - Status filtering (`Completed`, `Upcoming`, `Cancelled`), facility breakdown, and customer booking histories.
 
 ### 💳 7. Payments & Financial Transactions (`/payments`)
+
 - Payment logs, gateway transaction IDs, payment methods, and revenue status tracking.
 
 ### 💸 8. Provider Payouts (`/payouts`)
+
 - Payout requests management, payout status (`Pending`, `Approved`, `Processed`), bank account details, and manual approval triggers.
 
 ### 💰 9. Platform Commissions (`/commissions`)
+
 - Commission tier management, platform fee percentages, tier overrides, and historical fee reports.
 
 ### ⭐ 10. Reviews & Ratings Moderation (`/reviews`)
+
 - User feedback moderation console, star ratings breakdown, review visibility toggles, and direct responses.
 
 ### 📑 11. Platform Analytics & Reports (`/reports`)
+
 - Comprehensive usage and revenue reports.
 - Custom date filtering and instant PDF/CSV export downloads.
 
 ### 🆘 12. Support & Assistance Tickets (`/assistance`)
+
 - Support ticket queue, priority tagging (`High`, `Normal`), status tracking (`Open`, `In Progress`, `Resolved`, `Closed`), and inline response modal.
 
 ### 🚨 13. Safety Incidents & Moderation (`/safety`)
+
 - High-priority safety incident log (`Critical`, `High`, `Medium`, `Low`).
 - Active safety alert header banner.
 - Incident investigation protocol modal for saving action notes and status updates.
 - 24/7 Provider contact notice modal for immediate facility dispatch.
 
 ### 🏷️ 14. Service Categories (`/categories`)
+
 - Facility category inventory grid with category icon/photo cards.
 - Per-category active/inactive toggle switches.
 - New Category creation form with drag-and-drop / click-to-upload photo & icon support (PNG, JPG, WebP, SVG).
 
 ### 📄 15. Content Management System (`/content`)
+
 - Tabbed management interface for **FAQs** and **Policy Documents**.
 - Status management (`Published`, `Draft`, `Live`, `Under Review`).
 - Create and edit modals for adding questions, answers, and legal documents (Terms & Conditions, Privacy Policy, Host Terms, Refund Policy, Accessibility Policy).
 
 ### 🔔 16. Targeted Notifications (`/notifications`)
+
 - Platform notification dispatcher targeting **All**, **Clients**, or **Providers**.
 - Sent notification history with date, recipient count, and open-rate badges (`📬 68% open rate`).
 
 ### ⚙️ 17. System Settings & Danger Zone (`/settings`)
+
 - **Platform Controls**: Switches for Maintenance Mode, New Registrations, Auto-Approve Reviews, and Public Facility Visibility.
 - **Notification Channels**: Email & SMS transactional toggles.
 - **Operational Configuration**: Support email (`support@oopsy.app`), default commission %, and max advance booking days.
-- **Danger Zone**: Single-column vertical action stack for *Clear Cache*, *Reset Analytics*, *Database Backup*, and *Enable Maintenance Mode*.
+- **Danger Zone**: Single-column vertical action stack for _Clear Cache_, _Reset Analytics_, _Database Backup_, and _Enable Maintenance Mode_.
 
 ---
 
@@ -125,20 +138,23 @@
 ### Installation
 
 1. Clone the repository:
-   ```bash
-   git clone https://github.com/apponislam/oopsy-dashboard.git
-   cd oopsy-dashboard
-   ```
+
+    ```bash
+    git clone https://github.com/apponislam/oopsy-dashboard.git
+    cd oopsy-dashboard
+    ```
 
 2. Install dependencies:
-   ```bash
-   npm install
-   ```
+
+    ```bash
+    npm install
+    ```
 
 3. Run the development server (configured on port `3044`):
-   ```bash
-   npm run dev
-   ```
+
+    ```bash
+    npm run dev
+    ```
 
 4. Open [http://localhost:3044](http://localhost:3044) in your browser.
 
@@ -150,9 +166,9 @@ To serve your local environment securely to the web (matching [https://oopsy.app
 
 1. Install `cloudflared` on your system.
 2. Run the tunnel pointing to local port `3044`:
-   ```bash
-   cloudflared tunnel run --url http://localhost:3044
-   ```
+    ```bash
+    cloudflared tunnel run --url http://localhost:3044
+    ```
 
 ---
 
