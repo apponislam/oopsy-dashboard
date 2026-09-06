@@ -81,9 +81,9 @@
 - 24/7 Provider contact notice modal for immediate facility dispatch.
 
 ### 🏷️ 14. Service Categories (`/categories`)
-- Facility category inventory grid with custom emoji icons (Restroom 🚽, Private Bathroom 🪥, Shower 🚿, Storage Locker 🔒, Jacuzzi 💧, Spa 🧖, Hot Tub ♨️, Bathtub 🛁, Accessible ♿, Baby Changing 👶).
+- Facility category inventory grid with category icon/photo cards.
 - Per-category active/inactive toggle switches.
-- New Category creation form with emoji icon selector.
+- New Category creation form with drag-and-drop / click-to-upload photo & icon support (PNG, JPG, WebP, SVG).
 
 ### 📄 15. Content Management System (`/content`)
 - Tabbed management interface for **FAQs** and **Policy Documents**.

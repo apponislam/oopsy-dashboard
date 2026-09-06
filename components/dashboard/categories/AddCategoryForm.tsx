@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { PlusCircle, Smile } from "lucide-react";
+import { PlusCircle, Upload, Image as ImageIcon, X } from "lucide-react";
+import Image from "next/image";
 
 interface AddCategoryFormProps {
     onAddCategory: (name: string, icon: string) => void;
@@ -11,13 +12,30 @@ interface AddCategoryFormProps {
 
 export function AddCategoryForm({ onAddCategory }: AddCategoryFormProps) {
     const [name, setName] = useState("");
-    const [icon, setIcon] = useState("🧊");
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const url = URL.createObjectURL(file);
+            setImagePreview(url);
+        }
+    };
+
+    const handleRemoveImage = () => {
+        setImagePreview(null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+        }
+    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!name.trim()) return;
-        onAddCategory(name, icon || "🧊");
+        onAddCategory(name, imagePreview || "/location.svg");
         setName("");
+        handleRemoveImage();
     };
 
     return (
@@ -46,23 +64,52 @@ export function AddCategoryForm({ onAddCategory }: AddCategoryFormProps) {
 
                 <div className="space-y-1.5">
                     <label className="text-xs font-semibold uppercase tracking-wider text-gray-700 flex items-center justify-between">
-                        <span>Emoji Icon</span>
-                        <Smile className="h-3.5 w-3.5 text-gray-400" />
+                        <span>Category Icon / Image</span>
+                        <ImageIcon className="h-3.5 w-3.5 text-gray-400" />
                     </label>
-                    <div className="flex gap-2">
-                        <Input
-                            type="text"
-                            placeholder="🧊"
-                            value={icon}
-                            onChange={(e) => setIcon(e.target.value)}
-                            className="rounded-xl border-gray-200 text-center text-xl w-16"
-                            maxLength={4}
-                            required
-                        />
-                        <div className="flex-1 flex items-center px-3 text-xs text-gray-400 bg-gray-50 rounded-xl border border-gray-100">
-                            Paste or select an emoji for visual representation
+
+                    <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleImageChange}
+                        accept="image/*"
+                        className="hidden"
+                    />
+
+                    {imagePreview ? (
+                        <div className="relative w-40 h-40 mx-auto rounded-xl border border-gray-200 overflow-hidden bg-slate-50 flex items-center justify-center">
+                            <Image
+                                src={imagePreview}
+                                alt="Category Preview"
+                                fill
+                                className="object-cover"
+                            />
+                            <button
+                                type="button"
+                                onClick={handleRemoveImage}
+                                className="absolute top-2 right-2 bg-black/60 hover:bg-black text-white p-1.5 rounded-full transition-colors z-10"
+                            >
+                                <X className="h-3.5 w-3.5" />
+                            </button>
                         </div>
-                    </div>
+                    ) : (
+                        <div
+                            onClick={() => fileInputRef.current?.click()}
+                            className="w-40 h-40 mx-auto border-2 border-dashed border-gray-200 hover:border-[#088395] rounded-xl flex flex-col items-center justify-center p-3 cursor-pointer bg-slate-50/50 hover:bg-[#f0f9fa]/50 transition-all text-center gap-2 group"
+                        >
+                            <div className="p-2.5 bg-white rounded-xl border border-gray-200/80 shadow-2xs text-[#088395] group-hover:scale-105 transition-transform">
+                                <Upload className="h-5 w-5" />
+                            </div>
+                            <div className="space-y-1">
+                                <span className="font-semibold text-xs text-gray-800 block leading-tight">
+                                    Upload Photo / Icon
+                                </span>
+                                <span className="text-[10px] text-gray-400 block leading-tight px-1">
+                                    PNG, JPG, WebP or SVG (max 2MB)
+                                </span>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 <Button

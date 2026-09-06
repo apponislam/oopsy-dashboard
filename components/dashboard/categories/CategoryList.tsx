@@ -2,6 +2,7 @@
 
 import React from "react";
 import { ServiceCategory } from "./types";
+import Image from "next/image";
 
 interface CategoryListProps {
     categories: ServiceCategory[];
@@ -24,6 +25,8 @@ export function CategoryList({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {categories.map((cat) => {
                     const isActive = cat.isActive !== false;
+                    const isImageUrl = cat.icon.startsWith("blob:") || cat.icon.startsWith("http") || cat.icon.startsWith("/");
+
                     return (
                         <div
                             key={cat.id}
@@ -33,8 +36,17 @@ export function CategoryList({
                                     : "bg-gray-50/40 border-gray-100 opacity-60"
                             }`}
                         >
-                            <div className="w-12 h-12 rounded-xl bg-white border border-gray-200/80 flex items-center justify-center text-2xl shadow-2xs shrink-0">
-                                {cat.icon}
+                            <div className="w-12 h-12 rounded-xl bg-white border border-gray-200/80 flex items-center justify-center text-2xl shadow-2xs shrink-0 overflow-hidden relative">
+                                {isImageUrl ? (
+                                    <Image
+                                        src={cat.icon}
+                                        alt={cat.name}
+                                        fill
+                                        className="object-cover"
+                                    />
+                                ) : (
+                                    <span>{cat.icon}</span>
+                                )}
                             </div>
                             <div className="min-w-0 flex-1">
                                 <h3 className="font-bold text-gray-900 text-sm truncate">{cat.name}</h3>
