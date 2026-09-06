@@ -1,5 +1,5 @@
 export type ContentType = "faq" | "policies";
-export type ContentStatus = "Published" | "Draft";
+export type ContentStatus = "Published" | "Draft" | "Live" | "Under Review";
 
 export interface FAQItem {
     id: string;
@@ -12,7 +12,7 @@ export interface FAQItem {
 export interface PolicyItem {
     id: string;
     title: string;
-    category: string;
+    category?: string;
     lastUpdated: string;
-    status: ContentStatus;
+    status: "Live" | "Under Review" | "Published" | "Draft";
 }

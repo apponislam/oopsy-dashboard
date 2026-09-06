@@ -42,31 +42,33 @@ const initialFaqs: FAQItem[] = [
 const initialPolicies: PolicyItem[] = [
     {
         id: "pol-1",
-        title: "Platform Terms of Service",
-        category: "Legal",
-        lastUpdated: "2026-08-15",
-        status: "Published",
+        title: "Terms & Conditions",
+        lastUpdated: "15 Aug 2026",
+        status: "Live",
     },
     {
         id: "pol-2",
-        title: "Privacy & Data Protection Policy",
-        category: "Privacy",
-        lastUpdated: "2026-08-20",
-        status: "Published",
+        title: "Privacy Policy",
+        lastUpdated: "10 Aug 2026",
+        status: "Live",
     },
     {
         id: "pol-3",
-        title: "Facility Provider Guidelines",
-        category: "Provider",
-        lastUpdated: "2026-09-01",
-        status: "Published",
+        title: "Host Terms of Service",
+        lastUpdated: "1 Aug 2026",
+        status: "Live",
     },
     {
         id: "pol-4",
-        title: "Refund & Dispute Resolution Policy",
-        category: "Booking",
-        lastUpdated: "2026-09-05",
-        status: "Draft",
+        title: "Refund Policy",
+        lastUpdated: "20 Jul 2026",
+        status: "Under Review",
+    },
+    {
+        id: "pol-5",
+        title: "Accessibility Policy",
+        lastUpdated: "5 Jun 2026",
+        status: "Live",
     },
 ];
 
@@ -99,25 +101,18 @@ export function ContentManagement() {
     };
 
     const handleEditPolicy = (item: PolicyItem) => {
-        // Map policy into FAQ format for modal convenience
         setEditingItem({
             id: item.id,
             question: item.title,
-            category: item.category,
-            status: item.status,
+            category: item.category || "Legal",
+            status: item.status === "Live" ? "Published" : "Draft",
             answer: "",
         });
         setIsModalOpen(true);
     };
 
-    const handleTogglePolicyStatus = (id: string) => {
-        setPolicies((prev) =>
-            prev.map((item) =>
-                item.id === id
-                    ? { ...item, status: item.status === "Published" ? "Draft" : "Published" }
-                    : item
-            )
-        );
+    const handleViewPolicy = (item: PolicyItem) => {
+        alert(`Opening document viewer for: ${item.title}`);
     };
 
     const handleSaveContent = (titleOrQuestion: string, category: string, answerOrContent: string) => {
@@ -158,8 +153,8 @@ export function ContentManagement() {
                         id: `pol-${Date.now()}`,
                         title: titleOrQuestion,
                         category,
-                        lastUpdated: new Date().toISOString().split("T")[0],
-                        status: "Published",
+                        lastUpdated: "Today",
+                        status: "Live",
                     },
                 ]);
             }
@@ -214,7 +209,7 @@ export function ContentManagement() {
                     <PolicyTable
                         items={policies}
                         onEdit={handleEditPolicy}
-                        onToggleStatus={handleTogglePolicyStatus}
+                        onView={handleViewPolicy}
                     />
                 )}
             </div>

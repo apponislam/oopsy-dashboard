@@ -3,22 +3,21 @@
 import React from "react";
 import { PolicyItem } from "./types";
 import { Button } from "@/components/ui/button";
-import { Edit2, Eye, EyeOff, ShieldCheck } from "lucide-react";
+import { Edit2, ExternalLink, ShieldCheck } from "lucide-react";
 
 interface PolicyTableProps {
     items: PolicyItem[];
     onEdit: (item: PolicyItem) => void;
-    onToggleStatus: (id: string) => void;
+    onView: (item: PolicyItem) => void;
 }
 
-export function PolicyTable({ items, onEdit, onToggleStatus }: PolicyTableProps) {
+export function PolicyTable({ items, onEdit, onView }: PolicyTableProps) {
     return (
         <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
                 <thead>
                     <tr className="border-b border-gray-100 text-xs font-semibold uppercase tracking-wider text-gray-500 bg-slate-50/50">
-                        <th className="py-3.5 px-4 rounded-l-xl">Policy Document</th>
-                        <th className="py-3.5 px-4">Category</th>
+                        <th className="py-3.5 px-4 rounded-l-xl">Document</th>
                         <th className="py-3.5 px-4">Last Updated</th>
                         <th className="py-3.5 px-4">Status</th>
                         <th className="py-3.5 px-4 text-right rounded-r-xl">Actions</th>
@@ -33,22 +32,17 @@ export function PolicyTable({ items, onEdit, onToggleStatus }: PolicyTableProps)
                                     <span>{item.title}</span>
                                 </div>
                             </td>
-                            <td className="py-4 px-4 text-gray-600 font-medium">
-                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs bg-slate-100 text-slate-700 font-medium">
-                                    {item.category}
-                                </span>
-                            </td>
-                            <td className="py-4 px-4 text-gray-500 text-xs">
+                            <td className="py-4 px-4 text-gray-500 text-xs font-medium">
                                 {item.lastUpdated}
                             </td>
                             <td className="py-4 px-4">
-                                {item.status === "Published" ? (
+                                {item.status === "Live" || item.status === "Published" ? (
                                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">
-                                        Published
+                                        Live
                                     </span>
                                 ) : (
                                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">
-                                        Draft
+                                        Under Review
                                     </span>
                                 )}
                             </td>
@@ -66,24 +60,11 @@ export function PolicyTable({ items, onEdit, onToggleStatus }: PolicyTableProps)
                                     <Button
                                         variant="outline"
                                         size="sm"
-                                        onClick={() => onToggleStatus(item.id)}
-                                        className={`h-8 px-3 text-xs gap-1.5 rounded-lg border-gray-200 ${
-                                            item.status === "Published"
-                                                ? "text-slate-600 hover:bg-slate-100"
-                                                : "text-[#005461] hover:bg-teal-50"
-                                        }`}
+                                        onClick={() => onView(item)}
+                                        className="h-8 px-3 text-xs gap-1.5 text-[#005461] border-gray-200 rounded-lg hover:bg-teal-50"
                                     >
-                                        {item.status === "Published" ? (
-                                            <>
-                                                <EyeOff className="h-3.5 w-3.5" />
-                                                Unpublish
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Eye className="h-3.5 w-3.5" />
-                                                Publish
-                                            </>
-                                        )}
+                                        <ExternalLink className="h-3.5 w-3.5" />
+                                        View
                                     </Button>
                                 </div>
                             </td>
