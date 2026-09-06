@@ -14,16 +14,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const pathname = usePathname();
 
     return (
-        <Sidebar collapsible="offcanvas" className="border-r border-border/40" {...props}>
+        <Sidebar collapsible="offcanvas" className="border-r border-border/40 shadow-[4px_0px_12px_0px_#08839512]" style={{ boxShadow: "4px 0px 12px 0px #08839512" }} {...props}>
             {/* Header */}
             <SidebarHeader className="h-16 border-b border-border/40 px-4 justify-center">
-                <Link href="/" className="flex items-center gap-3 font-semibold group-data-[collapsible=icon]:justify-center">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#005461] text-white shadow-sm shrink-0">
-                        <Image src="/auth/icon1.svg" alt="Oopsy Logo" width={22} height={10} className="invert brightness-0 text-white" />
-                    </div>
+                <Link href="/" className="flex items-center gap-2 font-semibold group-data-[collapsible=icon]:justify-center">
+                    <Image src="/location.svg" alt="Oopsy Logo" width={30} height={30} />
+
                     <div className="flex flex-col group-data-[collapsible=icon]:hidden">
-                        <span className="text-base font-bold tracking-tight text-[#005461]">OOPSY</span>
-                        <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">Admin Console</span>
+                        <span className="font-bold tracking-tight text-[#005461] text-xl">OOPSY</span>
                     </div>
                 </Link>
             </SidebarHeader>
