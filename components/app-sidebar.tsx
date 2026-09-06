@@ -84,7 +84,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                             </div>
 
                             {/* Bottom: Icon + Log Out Button */}
-                            <Link href="/auth/login" className="flex items-center justify-center gap-2 w-full py-1.5 px-3 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-semibold transition-colors group-data-[collapsible=icon]:hidden">
+                            <Link href="/auth/login" className="flex items-center justify-center gap-2 w-full py-1.5 px-3 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-semibold transition-colors group-data-[collapsible=icon]:hidden shadow-xs">
                                 <LogOut className="h-3.5 w-3.5" />
                                 <span>Log Out</span>
                             </Link>

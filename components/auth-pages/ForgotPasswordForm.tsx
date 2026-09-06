@@ -84,12 +84,13 @@ export function ForgotPasswordForm() {
         </form>
 
         {/* Back to login */}
-        <div className="text-center text-sm">
+        <div className="text-center text-sm text-[#005461]/70">
+          Remember your password?{" "}
           <Link
             href="/auth/login"
             className="font-semibold text-[#005461] hover:underline"
           >
-            Remember your password? Sign in
+            Sign in
           </Link>
         </div>
       </div>
