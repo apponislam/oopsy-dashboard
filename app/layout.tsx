@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Plus_Jakarta_Sans } from "next/font/google";
+import { Plus_Jakarta_Sans, Geist } from "next/font/google";
+import { cn } from "@/lib/utils";
+import { TooltipProvider } from "@/components/ui/tooltip";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const jakarta = Plus_Jakarta_Sans({
     subsets: ["latin"],
@@ -14,8 +18,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
     return (
-        <html lang="en" className={`${jakarta.variable} h-full antialiased`}>
-            <body className="min-h-full flex flex-col">{children}</body>
+        <html lang="en" className={cn("h-full", "antialiased", jakarta.variable, "font-sans", geist.variable)}>
+            <body className="min-h-full flex flex-col">
+                <TooltipProvider>{children}</TooltipProvider>
+            </body>
         </html>
     );
 }
