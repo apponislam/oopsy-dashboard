@@ -40,20 +40,14 @@ export function SendNotificationForm({ onSendNotification }: SendNotificationFor
 
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-1.5">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-gray-700 block">
-                        Audience
-                    </label>
+                    <label className="text-xs font-semibold uppercase tracking-wider text-gray-700 block">Audience</label>
                     <div className="grid grid-cols-3 gap-2">
                         {audienceOptions.map((opt) => (
                             <button
                                 key={opt.label}
                                 type="button"
                                 onClick={() => setAudience(opt.label)}
-                                className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl border text-xs font-semibold transition-all ${
-                                    audience === opt.label
-                                        ? "bg-[#005461] border-[#005461] text-white shadow-xs"
-                                        : "bg-slate-50 border-gray-200 text-gray-700 hover:bg-gray-100"
-                                }`}
+                                className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl border text-xs font-semibold transition-all ${audience === opt.label ? "bg-[#005461] border-[#005461] text-white shadow-xs" : "bg-slate-50 border-gray-200 text-gray-700 hover:bg-gray-100"}`}
                             >
                                 {opt.icon}
                                 <span>{opt.label}</span>
@@ -63,36 +57,22 @@ export function SendNotificationForm({ onSendNotification }: SendNotificationFor
                 </div>
 
                 <div className="space-y-1.5">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-gray-700 block">
-                        Title
-                    </label>
-                    <Input
-                        type="text"
-                        placeholder="Notification title…"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        className="rounded-xl border-gray-200"
-                        required
-                    />
+                    <label className="text-xs font-semibold uppercase tracking-wider text-gray-700 block">Title</label>
+                    <Input type="text" placeholder="Notification title…" value={title} onChange={(e) => setTitle(e.target.value)} className="rounded-xl border-gray-200" required />
                 </div>
 
                 <div className="space-y-1.5">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-gray-700 block">
-                        Message
-                    </label>
+                    <label className="text-xs font-semibold uppercase tracking-wider text-gray-700 block">Message</label>
                     <textarea
                         placeholder="Notification body…"
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
-                        className="w-full min-h-[120px] p-3 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#005461]/20 focus:border-[#005461] transition-all resize-y"
+                        className="w-full min-h-30 p-3 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#005461]/20 focus:border-[#005461] transition-all resize-y"
                         required
                     />
                 </div>
 
-                <Button
-                    type="submit"
-                    className="w-full bg-[#005461] hover:bg-[#00424d] text-white rounded-xl py-5 gap-2 font-medium shadow-xs mt-2"
-                >
+                <Button type="submit" className="w-full bg-[#005461] hover:bg-[#00424d] text-white rounded-xl py-5 gap-2 font-medium shadow-xs mt-2">
                     <Send className="h-4 w-4" />
                     Send to {audience}
                 </Button>
