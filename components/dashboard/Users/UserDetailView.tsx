@@ -493,17 +493,6 @@ export function UserDetailView({ userId }: UserDetailViewProps) {
                                                         </>
                                                     )}
                                                 </button>
-
-                                                {/* Direct Link */}
-                                                <a
-                                                    href={businessDocUrl}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-white border border-[#005461]/20 hover:bg-[#005461] hover:text-white text-[#005461] font-bold text-xs transition-colors shadow-2xs"
-                                                    title="Open directly in new tab"
-                                                >
-                                                    <ExternalLink className="w-3.5 h-3.5" />
-                                                </a>
                                             </div>
                                         </div>
 
@@ -593,17 +582,6 @@ export function UserDetailView({ userId }: UserDetailViewProps) {
                                                         </>
                                                     )}
                                                 </button>
-
-                                                {/* Direct Link */}
-                                                <a
-                                                    href={govIdUrl}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-white border border-[#005461]/20 hover:bg-[#005461] hover:text-white text-[#005461] font-bold text-xs transition-colors shadow-2xs"
-                                                    title="Open directly in new tab"
-                                                >
-                                                    <ExternalLink className="w-3.5 h-3.5" />
-                                                </a>
                                             </div>
                                         </div>
 

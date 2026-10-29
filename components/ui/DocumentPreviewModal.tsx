@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { X, ExternalLink, Download, FileText, ImageIcon, Eye } from "lucide-react";
+import { X, Download, FileText, ImageIcon } from "lucide-react";
 import { isPdfFile, isImageFile } from "@/utils/imageUrl";
 
 export interface DocumentPreviewModalProps {
@@ -46,17 +46,6 @@ export function DocumentPreviewModal({ isOpen, onClose, title, url }: DocumentPr
                     </div>
 
                     <div className="flex items-center gap-2 shrink-0">
-                        <a
-                            href={url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-[#005461]/20 hover:bg-[#005461] hover:text-white text-[#005461] font-bold text-xs transition-colors shadow-2xs"
-                            title="Open in new window"
-                        >
-                            <ExternalLink className="w-3.5 h-3.5" />
-                            <span className="hidden sm:inline">Open in Tab</span>
-                        </a>
-
                         <a href={url} download={fileName} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-[#005461]/20 hover:bg-[#005461] hover:text-white text-[#005461] font-bold text-xs transition-colors shadow-2xs" title="Download file">
                             <Download className="w-3.5 h-3.5" />
                             <span className="hidden sm:inline">Download</span>
@@ -83,9 +72,8 @@ export function DocumentPreviewModal({ isOpen, onClose, title, url }: DocumentPr
                 </div>
 
                 {/* Modal Footer */}
-                <div className="p-3.5 bg-[#f0f9fa] border-t border-[#005461]/10 flex items-center justify-between text-xs text-[#005461]/70">
-                    <span className="truncate max-w-md hidden sm:inline">{url}</span>
-                    <button type="button" onClick={onClose} className="ml-auto px-4 py-1.5 rounded-xl bg-[#005461] text-white font-bold text-xs hover:bg-[#00424d] transition-colors cursor-pointer shadow-2xs">
+                <div className="p-3.5 bg-[#f0f9fa] border-t border-[#005461]/10 flex items-center justify-end text-xs text-[#005461]/70">
+                    <button type="button" onClick={onClose} className="px-4 py-1.5 rounded-xl bg-[#005461] text-white font-bold text-xs hover:bg-[#00424d] transition-colors cursor-pointer shadow-2xs">
                         Close Preview
                     </button>
                 </div>
