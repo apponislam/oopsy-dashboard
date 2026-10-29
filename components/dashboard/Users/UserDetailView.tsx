@@ -3,10 +3,11 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeft, Mail, Phone, MapPin, Building, Shield, Calendar, Ban, RotateCcw, Copy, Check, ExternalLink, FileText, Download, Star, Wallet, BookOpen, Clock, Loader2, CheckCircle2, AlertCircle, Hash, Globe, FileCheck } from "lucide-react";
+import { ArrowLeft, Mail, Phone, MapPin, Building, Shield, Calendar, Ban, RotateCcw, Copy, Check, ExternalLink, FileText, Star, Wallet, BookOpen, Clock, Loader2, CheckCircle2, AlertCircle, Globe, FileCheck, Eye, ChevronDown, ChevronUp, Maximize2 } from "lucide-react";
 import { useGetSingleUserQuery, useUpdateUserStatusMutation } from "@/redux/features/user/userApi";
-import { getImageUrl, isPdfFile, getFileType } from "@/utils/imageUrl";
+import { getImageUrl, isPdfFile } from "@/utils/imageUrl";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
+import { DocumentPreviewModal } from "@/components/ui/DocumentPreviewModal";
 import { cn } from "@/lib/utils";
 
 interface UserDetailViewProps {
@@ -14,11 +15,13 @@ interface UserDetailViewProps {
 }
 
 export function UserDetailView({ userId }: UserDetailViewProps) {
-    const { data: userResponse, isLoading, isError, error } = useGetSingleUserQuery(userId);
+    const { data: userResponse, isLoading, isError } = useGetSingleUserQuery(userId);
     const [updateUserStatus, { isLoading: isUpdating }] = useUpdateUserStatusMutation();
 
     const [isConfirmOpen, setIsConfirmOpen] = useState(false);
     const [copiedField, setCopiedField] = useState<string | null>(null);
+    const [previewModalDoc, setPreviewModalDoc] = useState<{ title: string; url: string } | null>(null);
+    const [inlinePreview, setInlinePreview] = useState<"biz" | "gov" | null>(null);
 
     const user = userResponse?.data;
 
@@ -431,46 +434,211 @@ export function UserDetailView({ userId }: UserDetailViewProps) {
                     {/* Verification Documents (Gov ID, Business Docs) */}
                     {(businessDocUrl || govIdUrl) && (
                         <div className="p-6 rounded-2xl bg-white border border-[#005461]/10 shadow-xs space-y-4">
-                            <h3 className="font-bold text-[#005461] text-sm uppercase tracking-wider flex items-center gap-2">
-                                <FileCheck className="w-4 h-4 text-[#005461]" /> Verification Documents
-                            </h3>
+                            <div className="flex items-center justify-between">
+                                <h3 className="font-bold text-[#005461] text-sm uppercase tracking-wider flex items-center gap-2">
+                                    <FileCheck className="w-4 h-4 text-[#005461]" /> Verification Documents
+                                </h3>
+                                <span className="text-[11px] text-[#005461]/60 font-semibold">Click &quot;Preview&quot; or &quot;Inline View&quot; to inspect</span>
+                            </div>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                            <div className="space-y-4">
+                                {/* Business Document */}
                                 {businessDocUrl && (
-                                    <div className="p-4 rounded-xl bg-[#f0f9fa] border border-[#005461]/10 flex items-center justify-between gap-3">
-                                        <div className="flex items-center gap-2.5">
-                                            <div className="h-10 w-10 rounded-lg bg-[#005461]/10 text-[#005461] flex items-center justify-center shrink-0">
-                                                <FileText className="w-5 h-5" />
+                                    <div className="rounded-xl border border-[#005461]/15 overflow-hidden bg-[#f0f9fa]/60 transition-all">
+                                        <div className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                            <div className="flex items-center gap-3">
+                                                <div className="h-10 w-10 rounded-xl bg-[#005461]/10 text-[#005461] flex items-center justify-center shrink-0">
+                                                    <FileText className="w-5 h-5" />
+                                                </div>
+                                                <div>
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-xs font-bold text-[#005461]">Business License / Doc</span>
+                                                        <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-[#005461]/10 text-[#005461]">{isPdfFile(businessDocUrl) ? "PDF Document" : "Image File"}</span>
+                                                    </div>
+                                                    <span className="text-[11px] text-[#005461]/60 font-mono truncate block max-w-xs sm:max-w-md">{businessDocUrl.split("/").pop()}</span>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <span className="text-xs font-bold text-[#005461] block">Business License / Doc</span>
-                                                <span className="text-[10px] text-[#005461]/60 uppercase font-bold">{isPdfFile(businessDocUrl) ? "PDF Document" : "Image File"}</span>
+
+                                            <div className="flex items-center gap-2">
+                                                {/* In-Page Modal Preview Button */}
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        setPreviewModalDoc({
+                                                            title: "Business License / Doc",
+                                                            url: businessDocUrl,
+                                                        })
+                                                    }
+                                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#005461] hover:bg-[#00424d] text-white font-bold text-xs transition-colors shadow-2xs cursor-pointer"
+                                                >
+                                                    <Eye className="w-3.5 h-3.5" />
+                                                    <span>Preview</span>
+                                                </button>
+
+                                                {/* Toggle Inline Preview Button */}
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setInlinePreview(inlinePreview === "biz" ? null : "biz")}
+                                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-[#005461]/20 hover:bg-[#f0f9fa] text-[#005461] font-bold text-xs transition-colors cursor-pointer"
+                                                >
+                                                    {inlinePreview === "biz" ? (
+                                                        <>
+                                                            <ChevronUp className="w-3.5 h-3.5" />
+                                                            <span>Hide</span>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <ChevronDown className="w-3.5 h-3.5" />
+                                                            <span>Inline View</span>
+                                                        </>
+                                                    )}
+                                                </button>
+
+                                                {/* Direct Link */}
+                                                <a
+                                                    href={businessDocUrl}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-white border border-[#005461]/20 hover:bg-[#005461] hover:text-white text-[#005461] font-bold text-xs transition-colors shadow-2xs"
+                                                    title="Open directly in new tab"
+                                                >
+                                                    <ExternalLink className="w-3.5 h-3.5" />
+                                                </a>
                                             </div>
                                         </div>
 
-                                        <a href={businessDocUrl} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 rounded-lg bg-white border border-[#005461]/20 hover:bg-[#005461] hover:text-white text-[#005461] font-bold text-xs transition-colors flex items-center gap-1 shadow-2xs">
-                                            <ExternalLink className="w-3.5 h-3.5" />
-                                            <span>View</span>
-                                        </a>
+                                        {/* Inline In-Page Preview Frame */}
+                                        {inlinePreview === "biz" && (
+                                            <div className="p-3 bg-white border-t border-[#005461]/15 animate-in fade-in duration-200">
+                                                <div className="mb-2 flex items-center justify-between text-xs">
+                                                    <span className="font-semibold text-[#005461] flex items-center gap-1.5">
+                                                        <Eye className="w-3.5 h-3.5 text-[#005461]" />
+                                                        Previewing Business License / Doc
+                                                    </span>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            setPreviewModalDoc({
+                                                                title: "Business License / Doc",
+                                                                url: businessDocUrl,
+                                                            })
+                                                        }
+                                                        className="inline-flex items-center gap-1 text-[11px] font-bold text-[#005461] hover:underline cursor-pointer"
+                                                    >
+                                                        <Maximize2 className="w-3 h-3" /> Fullscreen View
+                                                    </button>
+                                                </div>
+
+                                                {isPdfFile(businessDocUrl) ? (
+                                                    <iframe src={businessDocUrl} className="w-full h-130 rounded-lg border border-[#005461]/15 bg-white shadow-inner" title="Business Document Preview" />
+                                                ) : (
+                                                    <div className="p-3 bg-slate-50 border border-[#005461]/15 rounded-lg flex items-center justify-center max-h-125 overflow-auto">
+                                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                        <img src={businessDocUrl} alt="Business Document" className="max-h-115 max-w-full rounded-md object-contain shadow-xs" />
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
                                     </div>
                                 )}
 
+                                {/* Government-Issued ID */}
                                 {govIdUrl && (
-                                    <div className="p-4 rounded-xl bg-[#f0f9fa] border border-[#005461]/10 flex items-center justify-between gap-3">
-                                        <div className="flex items-center gap-2.5">
-                                            <div className="h-10 w-10 rounded-lg bg-[#005461]/10 text-[#005461] flex items-center justify-center shrink-0">
-                                                <FileText className="w-5 h-5" />
+                                    <div className="rounded-xl border border-[#005461]/15 overflow-hidden bg-[#f0f9fa]/60 transition-all">
+                                        <div className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                            <div className="flex items-center gap-3">
+                                                <div className="h-10 w-10 rounded-xl bg-[#005461]/10 text-[#005461] flex items-center justify-center shrink-0">
+                                                    <FileText className="w-5 h-5" />
+                                                </div>
+                                                <div>
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-xs font-bold text-[#005461]">Government-Issued ID</span>
+                                                        <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-[#005461]/10 text-[#005461]">{isPdfFile(govIdUrl) ? "PDF Document" : "Image File"}</span>
+                                                    </div>
+                                                    <span className="text-[11px] text-[#005461]/60 font-mono truncate block max-w-xs sm:max-w-md">{govIdUrl.split("/").pop()}</span>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <span className="text-xs font-bold text-[#005461] block">Government-Issued ID</span>
-                                                <span className="text-[10px] text-[#005461]/60 uppercase font-bold">{isPdfFile(govIdUrl) ? "PDF Document" : "Image File"}</span>
+
+                                            <div className="flex items-center gap-2">
+                                                {/* In-Page Modal Preview Button */}
+                                                <button
+                                                    type="button"
+                                                    onClick={() =>
+                                                        setPreviewModalDoc({
+                                                            title: "Government-Issued ID",
+                                                            url: govIdUrl,
+                                                        })
+                                                    }
+                                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#005461] hover:bg-[#00424d] text-white font-bold text-xs transition-colors shadow-2xs cursor-pointer"
+                                                >
+                                                    <Eye className="w-3.5 h-3.5" />
+                                                    <span>Preview</span>
+                                                </button>
+
+                                                {/* Toggle Inline Preview Button */}
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setInlinePreview(inlinePreview === "gov" ? null : "gov")}
+                                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-[#005461]/20 hover:bg-[#f0f9fa] text-[#005461] font-bold text-xs transition-colors cursor-pointer"
+                                                >
+                                                    {inlinePreview === "gov" ? (
+                                                        <>
+                                                            <ChevronUp className="w-3.5 h-3.5" />
+                                                            <span>Hide</span>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <ChevronDown className="w-3.5 h-3.5" />
+                                                            <span>Inline View</span>
+                                                        </>
+                                                    )}
+                                                </button>
+
+                                                {/* Direct Link */}
+                                                <a
+                                                    href={govIdUrl}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-white border border-[#005461]/20 hover:bg-[#005461] hover:text-white text-[#005461] font-bold text-xs transition-colors shadow-2xs"
+                                                    title="Open directly in new tab"
+                                                >
+                                                    <ExternalLink className="w-3.5 h-3.5" />
+                                                </a>
                                             </div>
                                         </div>
 
-                                        <a href={govIdUrl} target="_blank" rel="noopener noreferrer" className="px-3 py-1.5 rounded-lg bg-white border border-[#005461]/20 hover:bg-[#005461] hover:text-white text-[#005461] font-bold text-xs transition-colors flex items-center gap-1 shadow-2xs">
-                                            <ExternalLink className="w-3.5 h-3.5" />
-                                            <span>View</span>
-                                        </a>
+                                        {/* Inline In-Page Preview Frame */}
+                                        {inlinePreview === "gov" && (
+                                            <div className="p-3 bg-white border-t border-[#005461]/15 animate-in fade-in duration-200">
+                                                <div className="mb-2 flex items-center justify-between text-xs">
+                                                    <span className="font-semibold text-[#005461] flex items-center gap-1.5">
+                                                        <Eye className="w-3.5 h-3.5 text-[#005461]" />
+                                                        Previewing Government-Issued ID
+                                                    </span>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() =>
+                                                            setPreviewModalDoc({
+                                                                title: "Government-Issued ID",
+                                                                url: govIdUrl,
+                                                            })
+                                                        }
+                                                        className="inline-flex items-center gap-1 text-[11px] font-bold text-[#005461] hover:underline cursor-pointer"
+                                                    >
+                                                        <Maximize2 className="w-3 h-3" /> Fullscreen View
+                                                    </button>
+                                                </div>
+
+                                                {isPdfFile(govIdUrl) ? (
+                                                    <iframe src={govIdUrl} className="w-full h-130 rounded-lg border border-[#005461]/15 bg-white shadow-inner" title="Government ID Preview" />
+                                                ) : (
+                                                    <div className="p-3 bg-slate-50 border border-[#005461]/15 rounded-lg flex items-center justify-center max-h-125 overflow-auto">
+                                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                        <img src={govIdUrl} alt="Government ID" className="max-h-115 max-w-full rounded-md object-contain shadow-xs" />
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                             </div>
@@ -478,6 +646,9 @@ export function UserDetailView({ userId }: UserDetailViewProps) {
                     )}
                 </div>
             </div>
+
+            {/* In-Page Document Preview Modal (LightBox / Fullscreen) */}
+            <DocumentPreviewModal isOpen={!!previewModalDoc} onClose={() => setPreviewModalDoc(null)} title={previewModalDoc?.title || "Document Preview"} url={previewModalDoc?.url} />
 
             {/* Suspend / Restore Confirmation Modal */}
             <ConfirmModal

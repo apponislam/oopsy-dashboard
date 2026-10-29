@@ -9,12 +9,11 @@ import Link from "next/link";
 interface UsersTableProps {
     users: User[];
     isLoading?: boolean;
-    onViewUser?: (user: User) => void;
     onToggleStatus: (userId: string, currentActive: boolean, userName: string) => void;
     isUpdatingStatusId?: string | null;
 }
 
-export function UsersTable({ users, isLoading = false, onViewUser, onToggleStatus, isUpdatingStatusId }: UsersTableProps) {
+export function UsersTable({ users, isLoading = false, onToggleStatus, isUpdatingStatusId }: UsersTableProps) {
     const formatDate = (dateString?: string) => {
         if (!dateString) return "—";
         try {
