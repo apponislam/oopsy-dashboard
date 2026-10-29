@@ -2,13 +2,17 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Eye, EyeOff, Check } from "lucide-react";
+import { Eye, EyeOff, Check, AlertCircle, Loader2 } from "lucide-react";
 import { AuthLayoutWrapper } from "./AuthLayoutWrapper";
+import { useLoginMutation } from "@/redux/features/auth/authApi";
+import { useAppDispatch } from "@/redux/hooks";
+import { setUser } from "@/redux/features/auth/authSlice";
 
 const loginSchema = z.object({
   email: z
@@ -26,11 +30,15 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+  const [login, { isLoading }] = useLoginMutation();
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -40,8 +48,32 @@ export function LoginForm() {
     },
   });
 
-  const onSubmit = (data: LoginFormValues) => {
-    console.log("Login data submitted:", data);
+  const onSubmit = async (data: LoginFormValues) => {
+    try {
+      setServerError(null);
+      const res = await login({
+        email: data.email.trim(),
+        password: data.password,
+      }).unwrap();
+
+      if (res?.data?.accessToken && res?.data?.user) {
+        dispatch(
+          setUser({
+            user: res.data.user,
+            token: res.data.accessToken,
+          })
+        );
+        router.push("/");
+      } else {
+        setServerError("Login succeeded but no token or user received.");
+      }
+    } catch (err: any) {
+      const msg =
+        err?.data?.message ||
+        err?.message ||
+        "Invalid email or password. Please try again.";
+      setServerError(msg);
+    }
   };
 
   return (
@@ -53,9 +85,17 @@ export function LoginForm() {
             Welcome back
           </h1>
           <p className="text-sm text-[#005461]/70 font-normal">
-            Sign in to the oopsy admin console
+            Sign in to the Oopsy admin console
           </p>
         </div>
+
+        {/* Server Error Alert */}
+        {serverError && (
+          <div className="flex items-start gap-2.5 p-3 rounded-xl bg-destructive/10 border border-destructive/20 text-destructive text-sm animate-in fade-in">
+            <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
+            <p className="font-medium text-xs leading-relaxed">{serverError}</p>
+          </div>
+        )}
 
         {/* Form */}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -69,6 +109,7 @@ export function LoginForm() {
             <Input
               id="email"
               type="email"
+              autoComplete="email"
               placeholder="Enter your email address"
               {...register("email")}
               className="h-12 bg-white/80 border-white/60 rounded-xl text-[#005461] placeholder:text-[#005461]/40 focus-visible:ring-[#005461]"
@@ -91,6 +132,7 @@ export function LoginForm() {
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
+                autoComplete="current-password"
                 placeholder="Enter your password"
                 {...register("password")}
                 className="h-12 pr-10 bg-white/80 border-white/60 rounded-xl text-[#005461] placeholder:text-[#005461]/40 focus-visible:ring-[#005461]"
@@ -99,6 +141,7 @@ export function LoginForm() {
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-[#005461]/50 hover:text-[#005461] transition-colors"
+                tabIndex={-1}
               >
                 {showPassword ? (
                   <EyeOff className="h-4 w-4" />
@@ -140,32 +183,19 @@ export function LoginForm() {
 
           <Button
             type="submit"
-            disabled={isSubmitting}
-            className="w-full h-12 text-base font-semibold bg-[#005461] hover:bg-[#00424d] text-white rounded-xl shadow-none"
+            disabled={isLoading}
+            className="w-full h-12 text-base font-semibold bg-[#005461] hover:bg-[#00424d] text-white rounded-xl shadow-none cursor-pointer transition-colors"
           >
-            Sign in
+            {isLoading ? (
+              <div className="flex items-center gap-2">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>Signing in...</span>
+              </div>
+            ) : (
+              "Sign in"
+            )}
           </Button>
         </form>
-
-        {/* Divider */}
-        <div className="relative flex items-center justify-center my-4">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t border-[#005461]/15" />
-          </div>
-          <span className="relative bg-[#E2EFF1] px-3 text-xs text-[#005461]/50 uppercase">
-            or
-          </span>
-        </div>
-
-        {/* Create Account Link */}
-        <div className="text-center text-sm">
-          <Link
-            href="/auth/register"
-            className="font-semibold text-[#005461] hover:underline"
-          >
-            Create an account
-          </Link>
-        </div>
       </div>
     </AuthLayoutWrapper>
   );

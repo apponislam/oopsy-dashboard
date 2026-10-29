@@ -3,6 +3,7 @@ import "./globals.css";
 import { Plus_Jakarta_Sans, Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { ReduxProviders } from "@/providers/ReduxProvider";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -26,7 +27,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     return (
         <html lang="en" className={cn("h-full", "antialiased", jakarta.variable, "font-sans", geist.variable)}>
             <body className="min-h-full flex flex-col">
-                <TooltipProvider>{children}</TooltipProvider>
+                <ReduxProviders>
+                    <TooltipProvider>{children}</TooltipProvider>
+                </ReduxProviders>
             </body>
         </html>
     );
