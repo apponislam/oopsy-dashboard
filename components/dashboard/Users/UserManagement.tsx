@@ -1,11 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { User } from "./types";
 import { UsersHeader } from "./UsersHeader";
 import { UsersFilter, RoleFilterOption } from "./UsersFilter";
 import { UsersTable } from "./UsersTable";
-import { UserDetailModal } from "./UserDetailModal";
 import { Pagination } from "@/components/ui/pagination";
 import { usePagination } from "@/hooks/usePagination";
 import { useGetAllUsersQuery, useUpdateUserStatusMutation } from "@/redux/features/user/userApi";
@@ -23,7 +21,6 @@ export function UserManagement() {
     const [searchQuery, setSearchQuery] = useState("");
     const [debouncedSearch, setDebouncedSearch] = useState("");
     const [activeRoleFilter, setActiveRoleFilter] = useState<RoleFilterOption>("All");
-    const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const [updatingUserId, setUpdatingUserId] = useState<string | null>(null);
     const [confirmAction, setConfirmAction] = useState<StatusConfirmAction | null>(null);
 
@@ -74,15 +71,11 @@ export function UserManagement() {
 
         try {
             setUpdatingUserId(userId);
-            const res = await updateUserStatus({
+            await updateUserStatus({
                 userId,
                 isActive: !currentActive,
             }).unwrap();
 
-            // If the detail modal is currently displaying this user, update its local state too
-            if (selectedUser && selectedUser._id === userId && res?.data) {
-                setSelectedUser(res.data);
-            }
             setConfirmAction(null);
         } catch (error) {
             console.error("Failed to update user status:", error);
@@ -113,7 +106,6 @@ export function UserManagement() {
                 <UsersTable
                     users={users}
                     isLoading={isLoading || isFetching}
-                    onViewUser={(user) => setSelectedUser(user)}
                     onToggleStatus={handleRequestToggleStatus}
                     isUpdatingStatusId={updatingUserId}
                 />
@@ -132,14 +124,6 @@ export function UserManagement() {
                     </div>
                 )}
             </div>
-
-            {/* View Detail Modal */}
-            <UserDetailModal
-                user={selectedUser}
-                onClose={() => setSelectedUser(null)}
-                onToggleStatus={handleRequestToggleStatus}
-                isUpdatingStatus={updatingUserId === selectedUser?._id}
-            />
 
             {/* Suspend / Restore Confirmation Modal */}
             <ConfirmModal

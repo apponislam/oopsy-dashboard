@@ -4,11 +4,12 @@ import { Eye, Ban, RotateCcw, Loader2 } from "lucide-react";
 import { User } from "./types";
 import { getImageUrl } from "@/utils/imageUrl";
 import Image from "next/image";
+import Link from "next/link";
 
 interface UsersTableProps {
     users: User[];
     isLoading?: boolean;
-    onViewUser: (user: User) => void;
+    onViewUser?: (user: User) => void;
     onToggleStatus: (userId: string, currentActive: boolean, userName: string) => void;
     isUpdatingStatusId?: string | null;
 }
@@ -108,10 +109,13 @@ export function UsersTable({ users, isLoading = false, onViewUser, onToggleStatu
                                     </td>
                                     <td className="py-3.5 px-3 text-right">
                                         <div className="flex items-center justify-end gap-2">
-                                            <button type="button" onClick={() => onViewUser(user)} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#E2EFF1] hover:bg-[#005461] hover:text-white text-[#005461] font-bold text-[11px] transition-colors cursor-pointer">
+                                            <Link
+                                                href={`/users/${user._id}`}
+                                                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#E2EFF1] hover:bg-[#005461] hover:text-white text-[#005461] font-bold text-[11px] transition-colors cursor-pointer"
+                                            >
                                                 <Eye className="w-3 h-3" />
                                                 View
-                                            </button>
+                                            </Link>
                                             <button
                                                 type="button"
                                                 disabled={isCurrentUpdating}
