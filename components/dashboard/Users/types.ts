@@ -1,9 +1,4 @@
-export interface User {
-    id: string;
-    name: string;
-    email: string;
-    role: "Client" | "Provider";
-    joined: string;
-    bookings: number;
-    status: "Active" | "Suspended" | "Inactive";
-}
+import { TUser } from "@/redux/features/auth/authSlice";
+
+export type User = TUser;
+export type { Role } from "@/redux/features/auth/authSlice";

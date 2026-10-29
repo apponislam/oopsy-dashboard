@@ -9,7 +9,7 @@ import { useAppSelector } from "@/redux/hooks";
 import { currentUser } from "@/redux/features/auth/authSlice";
 import { useLogoutMutation } from "@/redux/features/auth/authApi";
 import { performFullLogout } from "@/redux/utils/logout";
-import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuBadge, SidebarMenuButton, SidebarMenuItem, SidebarRail } from "@/components/ui/sidebar";
+import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail } from "@/components/ui/sidebar";
 import { LogOut, Loader2 } from "lucide-react";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -73,13 +73,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                                     <Link href={item.url} className="flex items-center gap-3 w-full">
                                                         <item.icon className="h-4 w-4 shrink-0" />
                                                         <span className="flex-1 truncate">{item.title}</span>
-                                                        {item.badge !== undefined && (
-                                                            <SidebarMenuBadge
-                                                                className={isActive ? "bg-white/20 text-white font-semibold text-[11px] px-2 py-0.5 rounded-full border border-white/30" : "bg-[#005461]/10 text-[#005461] font-semibold text-[11px] px-2 py-0.5 rounded-full border border-[#005461]/20"}
-                                                            >
-                                                                {item.badge}
-                                                            </SidebarMenuBadge>
-                                                        )}
                                                     </Link>
                                                 }
                                             />
