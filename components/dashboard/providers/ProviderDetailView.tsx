@@ -49,6 +49,7 @@ export function ProviderDetailView({ providerId }: ProviderDetailViewProps) {
 
     const [isSuspendConfirmOpen, setIsSuspendConfirmOpen] = useState(false);
     const [isApproveConfirmOpen, setIsApproveConfirmOpen] = useState(false);
+    const [verificationNoteInput, setVerificationNoteInput] = useState("");
     const [copiedField, setCopiedField] = useState<string | null>(null);
     const [previewModalDoc, setPreviewModalDoc] = useState<{ title: string; url: string } | null>(null);
     const [inlinePreview, setInlinePreview] = useState<"biz" | "gov" | null>(null);
@@ -82,8 +83,10 @@ export function ProviderDetailView({ providerId }: ProviderDetailViewProps) {
             await updateUserStatus({
                 userId: provider._id,
                 isApproved: true,
+                verificationNote: verificationNoteInput.trim() || undefined,
             }).unwrap();
             setIsApproveConfirmOpen(false);
+            setVerificationNoteInput("");
         } catch (err) {
             console.error("Failed to approve provider:", err);
         }
@@ -664,6 +667,21 @@ export function ProviderDetailView({ providerId }: ProviderDetailViewProps) {
                         )}
                     </div>
 
+                    {/* Verification Note (if exists) */}
+                    {provider.verificationNote && (
+                        <div className="p-5 rounded-2xl bg-amber-50/70 border border-amber-200/80 shadow-xs space-y-1.5">
+                            <div className="flex items-center gap-2">
+                                <FileCheck className="w-4 h-4 text-amber-700" />
+                                <h3 className="font-bold text-amber-950 text-xs uppercase tracking-wider">
+                                    Verification Note
+                                </h3>
+                            </div>
+                            <p className="text-xs text-amber-900 leading-relaxed whitespace-pre-wrap pl-6">
+                                {provider.verificationNote}
+                            </p>
+                        </div>
+                    )}
+
                     {/* Verification Documents (Business License & Gov ID) */}
                     {(businessDocUrl || govIdUrl) && (
                         <div className="p-6 rounded-2xl bg-white border border-[#005461]/10 shadow-xs space-y-4">
@@ -944,9 +962,12 @@ export function ProviderDetailView({ providerId }: ProviderDetailViewProps) {
                 cancelText="Cancel"
                 isLoading={isUpdating}
                 onConfirm={handleApproveProvider}
-                onClose={() => setIsApproveConfirmOpen(false)}
+                onClose={() => {
+                    setIsApproveConfirmOpen(false);
+                    setVerificationNoteInput("");
+                }}
                 description={
-                    <div className="space-y-1.5">
+                    <div className="space-y-3">
                         <p>
                             Are you sure you want to approve{" "}
                             <strong className="font-bold text-[#005461]">{businessName}</strong>?
@@ -954,6 +975,18 @@ export function ProviderDetailView({ providerId }: ProviderDetailViewProps) {
                         <p className="text-[#005461]/70">
                             This will verify the provider&apos;s credentials, mark them as a Verified Provider, and allow their listings and services to appear publicly for bookings.
                         </p>
+                        <div className="space-y-1 pt-1 text-left">
+                            <label className="text-[11px] font-bold text-[#005461] block">
+                                Verification Note (Optional)
+                            </label>
+                            <textarea
+                                value={verificationNoteInput}
+                                onChange={(e) => setVerificationNoteInput(e.target.value)}
+                                placeholder="Add an optional verification note or internal remark..."
+                                className="w-full px-3 py-2 text-xs rounded-xl border border-[#005461]/20 focus:outline-none focus:ring-1 focus:ring-[#005461] bg-white resize-none"
+                                rows={2}
+                            />
+                        </div>
                     </div>
                 }
             />

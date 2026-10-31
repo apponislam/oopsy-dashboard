@@ -348,6 +348,17 @@ export function UserDetailView({ userId }: UserDetailViewProps) {
                                 <span className="font-bold text-[#005461] block">{user.isEmailVerified ? <span className="text-emerald-700">Email Verified</span> : <span className="text-amber-700">Email Pending Verification</span>}</span>
                             </div>
 
+                            {user.verificationNote && (
+                                <div className="p-3.5 rounded-xl bg-amber-50/70 border border-amber-200/80 space-y-1 sm:col-span-2">
+                                    <span className="text-[10px] uppercase font-bold text-amber-900 flex items-center gap-1">
+                                        <FileText className="w-3 h-3 text-amber-700" /> Verification Note
+                                    </span>
+                                    <p className="text-amber-950 font-medium leading-relaxed whitespace-pre-wrap">
+                                        {user.verificationNote}
+                                    </p>
+                                </div>
+                            )}
+
                             {user.website && (
                                 <div className="p-3.5 rounded-xl bg-[#f0f9fa] border border-[#005461]/5 space-y-1 sm:col-span-2">
                                     <span className="text-[10px] uppercase font-bold text-[#005461]/60 flex items-center gap-1">

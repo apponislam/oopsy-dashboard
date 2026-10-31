@@ -55,7 +55,6 @@ export type TUser = {
     isApproved?: boolean;
     approvedBy?: string;
     verificationNote?: string;
-    rating?: number;
     isDeleted: boolean;
     lastLogin?: string;
     referralCode?: string;
