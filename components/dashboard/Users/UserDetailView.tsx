@@ -249,7 +249,7 @@ export function UserDetailView({ userId }: UserDetailViewProps) {
                                         <span className="text-[10px] font-bold uppercase text-[#005461]/60 flex items-center gap-1">
                                             <Star className="w-3 h-3 text-amber-500 fill-amber-400" /> Rating
                                         </span>
-                                        <span className="text-base font-extrabold text-[#005461] mt-0.5">{user.averageRating ? user.averageRating.toFixed(1) : "N/A"}</span>
+                                        <span className="text-base font-extrabold text-[#005461] mt-0.5">{(user.averageRating ?? 0).toFixed(1)}</span>
                                     </div>
 
                                     <div className="p-3 rounded-xl bg-[#f0f9fa] border border-[#005461]/5 flex flex-col items-center justify-center">

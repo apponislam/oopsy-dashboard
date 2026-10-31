@@ -7,6 +7,11 @@ export type TUserStats = {
     totalProviders: number;
     pendingApprovals: number;
     activeUsers: number;
+    providerStats?: TProviderStats;
+    provider?: TProviderStats;
+    verifiedProviders?: number;
+    pendingProviders?: number;
+    suspendedProviders?: number;
 };
 
 export type TUserMeta = {
@@ -25,6 +30,13 @@ export type TGetAllUsersResponse = {
     data: TUser[];
     meta: TUserMeta;
     stats?: TUserStats;
+};
+
+export type TProviderStats = {
+    total: number;
+    verified: number;
+    pending: number;
+    suspended: number;
 };
 
 export type TGetSingleUserResponse = {
@@ -87,7 +99,6 @@ export const userApi = baseApi.injectEndpoints({
                       ]
                     : [{ type: "User", id: "LIST" }],
         }),
-
         // GET /users/:userId - Get single user details
         getSingleUser: builder.query<TGetSingleUserResponse, string>({
             query: (userId) => ({

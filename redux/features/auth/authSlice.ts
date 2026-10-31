@@ -45,6 +45,8 @@ export type TUser = {
     governmentIssuedId?: string;
     balance?: number;
     bookingCount?: number;
+    listingCount?: number;
+    totalRevenue?: number;
     stripeAccountId?: string;
     averageRating?: number;
     totalReviews?: number;

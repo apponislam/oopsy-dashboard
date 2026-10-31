@@ -1,143 +1,224 @@
 "use client";
 
-import { useState } from "react";
-import { Provider, ProviderStats } from "./types";
+import { useState, useEffect } from "react";
+import { Search } from "lucide-react";
+import { ProviderStats } from "./types";
 import { ProvidersHeader } from "./ProvidersHeader";
 import { ProvidersStatsCards } from "./ProvidersStatsCards";
 import { ProvidersTable } from "./ProvidersTable";
-import { ProviderViewModal } from "./ProviderViewModal";
-import { ProviderFormModal } from "./ProviderFormModal";
+import { Pagination } from "@/components/ui/pagination";
+import { usePagination } from "@/hooks/usePagination";
+import { useGetAllUsersQuery, useUpdateUserStatusMutation } from "@/redux/features/user/userApi";
+import { ConfirmModal } from "@/components/ui/ConfirmModal";
 
-const initialProviders: Provider[] = [
-    {
-        id: "P-001",
-        business: "CleanSpace Ltd",
-        owner: "Marcus Webb",
-        listings: 3,
-        bookings: 143,
-        revenue: "£4,820",
-        rating: 4.9,
-        verified: "Verified",
-        status: "Active",
-    },
-    {
-        id: "P-002",
-        business: "Refresh Hub",
-        owner: "Lily Wang",
-        listings: 2,
-        bookings: 89,
-        revenue: "£2,670",
-        rating: 4.8,
-        verified: "Verified",
-        status: "Active",
-    },
-    {
-        id: "P-003",
-        business: "ZenSpa London",
-        owner: "Alice Park",
-        listings: 1,
-        bookings: 12,
-        revenue: "£960",
-        rating: 4.6,
-        verified: "Pending",
-        status: "Active",
-    },
-    {
-        id: "P-004",
-        business: "SecureBox",
-        owner: "Tom Harris",
-        listings: 4,
-        bookings: 201,
-        revenue: "£6,030",
-        rating: 4.7,
-        verified: "Verified",
-        status: "Suspended",
-    },
-];
-
-const globalStats: ProviderStats = {
-    total: 1284,
-    verified: 1198,
-    pending: 78,
-    suspended: 8,
-};
+interface StatusConfirmAction {
+    userId: string;
+    userName: string;
+    currentActive: boolean;
+}
 
 export function ProvidersManagement() {
-    const [providers, setProviders] = useState<Provider[]>(initialProviders);
+    const { page, limit, setPage, setLimit } = usePagination({ initialLimit: 10 });
+
+    const [searchQuery, setSearchQuery] = useState("");
+    const [debouncedSearch, setDebouncedSearch] = useState("");
     const [activeStatFilter, setActiveStatFilter] = useState<string | null>(null);
-    const [selectedProviderForView, setSelectedProviderForView] = useState<Provider | null>(null);
-    const [isFormOpen, setIsFormOpen] = useState(false);
-    const [providerToEdit, setProviderToEdit] = useState<Provider | null>(null);
+    const [updatingUserId, setUpdatingUserId] = useState<string | null>(null);
+    const [confirmAction, setConfirmAction] = useState<StatusConfirmAction | null>(null);
 
-    const activeCount = providers.filter((p) => p.status === "Active").length;
+    // Debounce search query to avoid spamming the backend
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearch(searchQuery);
+            setPage(1);
+        }, 300);
+        return () => clearTimeout(timer);
+    }, [searchQuery, setPage]);
 
-    // Filter providers table based on stat card click
-    const filteredProviders = providers.filter((p) => {
-        if (!activeStatFilter || activeStatFilter === "Total") return true;
-        if (activeStatFilter === "Verified") return p.verified === "Verified";
-        if (activeStatFilter === "Pending") return p.verified === "Pending";
-        if (activeStatFilter === "Suspended") return p.status === "Suspended";
-        return true;
+    // Handle filter selection from Stat Cards
+    const handleSelectStatFilter = (filter: string | null) => {
+        setActiveStatFilter(filter);
+        setPage(1);
+    };
+
+    // Calculate filter params based on selected stat card
+    const isApprovedParam =
+        activeStatFilter === "Verified"
+            ? true
+            : activeStatFilter === "Pending"
+            ? false
+            : undefined;
+
+    const isActiveParam = activeStatFilter === "Suspended" ? false : undefined;
+
+    // Fetch providers from backend via RTK Query
+    const {
+        data: providersResponse,
+        isLoading,
+        isFetching,
+    } = useGetAllUsersQuery({
+        role: "PROVIDER",
+        page,
+        limit,
+        searchTerm: debouncedSearch.trim() || undefined,
+        isApproved: isApprovedParam,
+        isActive: isActiveParam,
     });
 
-    const handleSaveProvider = (savedProvider: Provider) => {
-        setProviders((prev) => {
-            const exists = prev.some((p) => p.id === savedProvider.id);
-            if (exists) {
-                return prev.map((p) => (p.id === savedProvider.id ? savedProvider : p));
-            }
-            return [savedProvider, ...prev];
+    const [updateUserStatus] = useUpdateUserStatusMutation();
+
+    // Trigger confirmation modal for Suspend / Restore
+    const handleRequestToggleStatus = (userId: string, currentActive: boolean, userName: string) => {
+        setConfirmAction({
+            userId,
+            userName,
+            currentActive,
         });
     };
 
-    const handleOpenAddForm = () => {
-        setProviderToEdit(null);
-        setIsFormOpen(true);
+    // Execute status change after confirmation
+    const handleConfirmStatusChange = async () => {
+        if (!confirmAction) return;
+        const { userId, currentActive } = confirmAction;
+
+        try {
+            setUpdatingUserId(userId);
+            await updateUserStatus({
+                userId,
+                isActive: !currentActive,
+            }).unwrap();
+            setConfirmAction(null);
+        } catch (error) {
+            console.error("Failed to update provider status:", error);
+        } finally {
+            setUpdatingUserId(null);
+        }
     };
 
-    const handleOpenEditForm = (provider: Provider) => {
-        setProviderToEdit(provider);
-        setIsFormOpen(true);
+    const providers = providersResponse?.data || [];
+    const meta = providersResponse?.meta;
+    const statsData = providersResponse?.stats;
+
+    // Compute stats from backend data
+    const stats: ProviderStats = {
+        total: statsData?.providerStats?.total ?? statsData?.totalProviders ?? 0,
+        verified: statsData?.providerStats?.verified ?? statsData?.verifiedProviders ?? 0,
+        pending: statsData?.providerStats?.pending ?? statsData?.pendingProviders ?? 0,
+        suspended: statsData?.providerStats?.suspended ?? statsData?.suspendedProviders ?? 0,
     };
+
+    const activeCount = Math.max(0, stats.total - stats.suspended);
 
     return (
         <div className="p-6 md:p-8 space-y-6 max-w-[1600px] mx-auto min-h-screen">
-            {/* Header */}
+            {/* Header without Add Provider button */}
             <ProvidersHeader
-                totalProviders={providers.length}
+                totalProviders={stats.total}
                 activeProviders={activeCount}
-                onAddProvider={handleOpenAddForm}
             />
 
             {/* Summary Stat Cards */}
             <ProvidersStatsCards
-                stats={globalStats}
+                stats={stats}
                 activeStatFilter={activeStatFilter}
-                onSelectStatFilter={setActiveStatFilter}
+                onSelectStatFilter={handleSelectStatFilter}
             />
 
             {/* Table Container */}
-            <div className="p-6 rounded-2xl bg-white border border-[#005461]/10 shadow-xs">
+            <div className="p-6 rounded-2xl bg-white border border-[#005461]/10 shadow-xs space-y-5">
+                {/* Search Bar */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="relative flex-1 max-w-md">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#005461]/40" />
+                        <input
+                            type="text"
+                            placeholder="Search providers by name, email, or business..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="w-full h-10 pl-9 pr-4 bg-[#f0f9fa] border border-[#005461]/10 rounded-xl text-xs font-medium text-[#005461] placeholder:text-[#005461]/40 focus:outline-none focus:ring-2 focus:ring-[#005461]/20"
+                        />
+                    </div>
+
+                    {activeStatFilter && (
+                        <div className="flex items-center gap-2 text-xs">
+                            <span className="text-[#005461]/60">Filtered by:</span>
+                            <span className="font-bold text-[#005461] bg-[#005461]/10 px-2.5 py-1 rounded-lg">
+                                {activeStatFilter}
+                            </span>
+                            <button
+                                type="button"
+                                onClick={() => handleSelectStatFilter(null)}
+                                className="text-xs text-rose-600 hover:underline font-bold cursor-pointer"
+                            >
+                                Clear
+                            </button>
+                        </div>
+                    )}
+                </div>
+
+                {/* Providers Table */}
                 <ProvidersTable
-                    providers={filteredProviders}
-                    onViewProvider={(provider) => setSelectedProviderForView(provider)}
-                    onEditProvider={handleOpenEditForm}
+                    providers={providers}
+                    isLoading={isLoading || isFetching}
+                    onToggleStatus={handleRequestToggleStatus}
+                    isUpdatingStatusId={updatingUserId}
                 />
+
+                {/* Pagination */}
+                {meta && (
+                    <div className="border-t border-[#005461]/10 pt-3">
+                        <Pagination
+                            meta={meta}
+                            onPageChange={setPage}
+                            onLimitChange={setLimit}
+                            limitOptions={[10, 20, 50, 100]}
+                            showLimitSelector={true}
+                            showSummary={true}
+                        />
+                    </div>
+                )}
             </div>
 
-            {/* View Modal */}
-            <ProviderViewModal
-                provider={selectedProviderForView}
-                onClose={() => setSelectedProviderForView(null)}
-            />
-
-            {/* Form Modal (Add / Edit) */}
-            <ProviderFormModal
-                isOpen={isFormOpen}
-                providerToEdit={providerToEdit}
-                onClose={() => setIsFormOpen(false)}
-                onSave={handleSaveProvider}
+            {/* Suspend / Restore Confirmation Modal */}
+            <ConfirmModal
+                isOpen={!!confirmAction}
+                title={confirmAction?.currentActive ? "Suspend Provider Account" : "Restore Provider Account"}
+                variant={confirmAction?.currentActive ? "danger" : "success"}
+                confirmText={confirmAction?.currentActive ? "Suspend Account" : "Restore Account"}
+                cancelText="Cancel"
+                isLoading={updatingUserId === confirmAction?.userId}
+                onConfirm={handleConfirmStatusChange}
+                onClose={() => {
+                    if (updatingUserId !== confirmAction?.userId) {
+                        setConfirmAction(null);
+                    }
+                }}
+                description={
+                    confirmAction?.currentActive ? (
+                        <div className="space-y-1.5">
+                            <p>
+                                Are you sure you want to suspend{" "}
+                                <strong className="font-bold text-[#005461]">{confirmAction.userName}</strong>?
+                            </p>
+                            <p className="text-[#005461]/70">
+                                This provider will be immediately blocked from signing in, receiving new bookings, and accessing dashboard services until their account is restored.
+                            </p>
+                        </div>
+                    ) : (
+                        <div className="space-y-1.5">
+                            <p>
+                                Are you sure you want to restore{" "}
+                                <strong className="font-bold text-[#005461]">{confirmAction?.userName}</strong>?
+                            </p>
+                            <p className="text-[#005461]/70">
+                                This provider will regain full access to their account, active listings, and booking management.
+                            </p>
+                        </div>
+                    )
+                }
             />
         </div>
     );
 }
+
+export default ProvidersManagement;

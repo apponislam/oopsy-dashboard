@@ -1,14 +1,6 @@
-export interface Provider {
-    id: string;
-    business: string;
-    owner: string;
-    listings: number;
-    bookings: number;
-    revenue: string;
-    rating: number;
-    verified: "Verified" | "Pending";
-    status: "Active" | "Suspended";
-}
+import { TUser } from "@/redux/features/auth/authSlice";
+
+export type Provider = TUser;
 
 export interface ProviderStats {
     total: number;
