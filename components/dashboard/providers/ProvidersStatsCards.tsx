@@ -1,10 +1,10 @@
 "use client";
 
-import { ProviderStats } from "./types";
+import { TProviderStats } from "@/redux/features/user/userApi";
 import { Building2, ShieldCheck, Clock, Ban } from "lucide-react";
 
 interface ProvidersStatsCardsProps {
-    stats: ProviderStats;
+    stats: TProviderStats;
     activeStatFilter: string | null;
     onSelectStatFilter: (filter: string | null) => void;
 }

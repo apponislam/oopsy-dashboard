@@ -2,13 +2,16 @@
 
 import { useState, useEffect } from "react";
 import { Search } from "lucide-react";
-import { ProviderStats } from "./types";
 import { ProvidersHeader } from "./ProvidersHeader";
 import { ProvidersStatsCards } from "./ProvidersStatsCards";
 import { ProvidersTable } from "./ProvidersTable";
 import { Pagination } from "@/components/ui/pagination";
 import { usePagination } from "@/hooks/usePagination";
-import { useGetAllUsersQuery, useUpdateUserStatusMutation } from "@/redux/features/user/userApi";
+import {
+    TProviderStats,
+    useGetAllUsersQuery,
+    useUpdateUserStatusMutation,
+} from "@/redux/features/user/userApi";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 
 interface StatusConfirmAction {
@@ -100,7 +103,7 @@ export function ProvidersManagement() {
     const statsData = providersResponse?.stats;
 
     // Compute stats from backend data
-    const stats: ProviderStats = {
+    const stats: TProviderStats = {
         total: statsData?.providerStats?.total ?? statsData?.totalProviders ?? 0,
         verified: statsData?.providerStats?.verified ?? statsData?.verifiedProviders ?? 0,
         pending: statsData?.providerStats?.pending ?? statsData?.pendingProviders ?? 0,

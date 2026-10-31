@@ -51,6 +51,7 @@ export type TUpdateUserStatusPayload = {
     isActive?: boolean;
     isApproved?: boolean;
     isEmailVerified?: boolean;
+    verificationNote?: string;
 };
 
 export type TGetAllUsersParams = {

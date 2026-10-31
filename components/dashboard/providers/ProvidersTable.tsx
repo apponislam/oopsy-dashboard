@@ -3,11 +3,11 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Eye, Ban, RotateCcw, Loader2, Star, ShieldCheck, Clock } from "lucide-react";
-import { Provider } from "./types";
+import { TUser } from "@/redux/features/auth/authSlice";
 import { getImageUrl } from "@/utils/imageUrl";
 
 interface ProvidersTableProps {
-    providers: Provider[];
+    providers: TUser[];
     isLoading?: boolean;
     onToggleStatus: (userId: string, currentActive: boolean, userName: string) => void;
     isUpdatingStatusId?: string | null;
