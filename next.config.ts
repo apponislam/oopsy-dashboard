@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+    allowedDevOrigins: ["oopsy.apponislam.top"],
     images: {
         remotePatterns: [
             {
