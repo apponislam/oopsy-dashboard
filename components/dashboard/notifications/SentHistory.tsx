@@ -32,10 +32,12 @@ export function SentHistory({ history }: SentHistoryProps) {
                             To: <span className="font-semibold text-gray-700">{item.audience}</span> · {item.date} · {item.recipientsCount.toLocaleString()} recipients
                         </div>
 
-                        <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 w-fit px-2.5 py-1 rounded-lg border border-emerald-100/80">
-                            <MailCheck className="h-3.5 w-3.5" />
-                            <span>📬 {item.openRate} open rate</span>
-                        </div>
+                        {item.openRate && (
+                            <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 w-fit px-2.5 py-1 rounded-lg border border-emerald-100/80">
+                                <MailCheck className="h-3.5 w-3.5" />
+                                <span>📬 {item.openRate} open rate</span>
+                            </div>
+                        )}
                     </div>
                 ))}
             </div>

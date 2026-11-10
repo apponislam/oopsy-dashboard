@@ -36,7 +36,9 @@ export interface TSingleFaqResponse {
     data: IFaq;
 }
 
-export const faqApi = baseApi.injectEndpoints({
+export const faqApi = baseApi
+    .enhanceEndpoints({ addTagTypes: ["Faq"] })
+    .injectEndpoints({
     overrideExisting: true,
     endpoints: (builder) => ({
         // GET /faqs - Retrieve all FAQs

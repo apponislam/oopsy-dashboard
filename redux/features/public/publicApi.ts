@@ -30,7 +30,9 @@ export interface TUpsertPolicyPayload {
     content: string;
 }
 
-export const publicApi = baseApi.injectEndpoints({
+export const publicApi = baseApi
+    .enhanceEndpoints({ addTagTypes: ["Policy"] })
+    .injectEndpoints({
     overrideExisting: true,
     endpoints: (builder) => ({
         // GET /public/:type - Retrieve policy by type
