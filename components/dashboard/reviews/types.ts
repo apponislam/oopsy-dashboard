@@ -1,14 +1,12 @@
-export type ReviewStatus = "Flagged" | "Published" | "Under Review" | "Removed";
+import {
+    IReview,
+    IAdminReviewStats,
+    IReviewUser,
+    IReviewListing,
+    IReviewBooking,
+} from "@/redux/features/review/reviewApi";
 
-export interface ReviewItem {
-    id: string;
-    reviewer: string;
-    facility: string;
-    rating: number; // e.g. 1, 2, 4, 5
-    comment: string;
-    date: string;
-    status: ReviewStatus;
-}
+export type ReviewStatus = "Flagged" | "Published" | "Under Review" | "Removed";
 
 export interface ReviewStats {
     total: number;
@@ -16,3 +14,12 @@ export interface ReviewStats {
     underReview: number;
     removed: number;
 }
+
+export function getReviewStatus(review: IReview): ReviewStatus {
+    if (review.isDeleted) return "Removed";
+    if (review.isFlagged) return "Flagged";
+    if (review.isApproved === false) return "Under Review";
+    return "Published";
+}
+
+export type { IReview, IAdminReviewStats, IReviewUser, IReviewListing, IReviewBooking };
